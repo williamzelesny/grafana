@@ -52,11 +52,11 @@ func NewEvaluationValues(m map[string]eval.NumberValueCapture) map[string]*float
 	return result
 }
 
-func (a *State) resultNormal(_ *ngModels.AlertRule, result eval.Result) {
+func (a *State) resultNormal(evaluatedAt time.Time) {
 	a.Error = nil // should be nil since state is not error
 	if a.State != eval.Normal {
-		a.EndsAt = result.EvaluatedAt
-		a.StartsAt = result.EvaluatedAt
+		a.EndsAt = evaluatedAt
+		a.StartsAt = evaluatedAt
 	}
 	a.State = eval.Normal
 }
@@ -110,7 +110,7 @@ func (a *State) resultError(alertRule *ngModels.AlertRule, result eval.Result) {
 		}
 		execErrState = eval.Error
 	case ngModels.OkErrState:
-		a.resultNormal(alertRule, result)
+		a.resultNormal(result.EvaluatedAt)
 		return
 	default:
 		a.Error = fmt.Errorf("cannot map error to a state because option [%s] is not supported. evaluation error: %w", alertRule.ExecErrState, a.Error)
