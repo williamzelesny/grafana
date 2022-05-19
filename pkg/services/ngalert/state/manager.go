@@ -184,7 +184,7 @@ func (st *Manager) setNextState(ctx context.Context, alertRule *ngModels.AlertRu
 	st.log.Debug("setting alert state", "uid", alertRule.UID)
 	switch result.State {
 	case eval.Normal:
-		currentState.resultNormal(result.EvaluatedAt)
+		currentState.resultNormal(alertRule, result)
 	case eval.Alerting:
 		currentState.resultAlerting(alertRule, result)
 	case eval.Error:
