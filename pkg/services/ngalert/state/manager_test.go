@@ -51,7 +51,7 @@ func TestDashboardAnnotations(t *testing.T) {
 	})
 
 	st.Warm(ctx)
-	_ = st.ProcessEvalResults(ctx, rule, eval.Results{{
+	_ = st.ProcessEvalResults(ctx, evaluationTime, rule, eval.Results{{
 		Instance:    data.Labels{"instance_label": "testValue2"},
 		State:       eval.Alerting,
 		EvaluatedAt: evaluationTime,
@@ -843,6 +843,7 @@ func TestProcessEvalResults(t *testing.T) {
 				},
 			},
 		},
+
 		{
 			desc: "normal -> nodata no labels when result is NoData and NoDataState is nodata",
 			alertRule: &models.AlertRule{
@@ -1777,7 +1778,7 @@ func TestProcessEvalResults(t *testing.T) {
 			annotations.SetRepository(fakeAnnoRepo)
 
 			for _, res := range tc.evalResults {
-				_ = st.ProcessEvalResults(context.Background(), tc.alertRule, res)
+				_ = st.ProcessEvalResults(context.Background(), evaluationTime, tc.alertRule, res)
 			}
 
 			states := st.GetStatesForRuleUID(tc.alertRule.OrgID, tc.alertRule.UID)
@@ -1889,7 +1890,7 @@ func TestStaleResultsHandler(t *testing.T) {
 		// We have loaded the expected number of entries from the db
 		assert.Equal(t, tc.startingStateCount, len(existingStatesForRule))
 		for _, res := range tc.evalResults {
-			st.ProcessEvalResults(context.Background(), rule, res)
+			st.ProcessEvalResults(context.Background(), evaluationTime, rule, res)
 			for _, s := range tc.expectedStates {
 				cachedState, err := st.Get(s.OrgID, s.AlertRuleUID, s.CacheId)
 				require.NoError(t, err)
