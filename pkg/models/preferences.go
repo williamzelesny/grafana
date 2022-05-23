@@ -54,6 +54,7 @@ type QueryHistoryPreference struct {
 }
 
 type PreferencesJsonData struct {
+	Locale       string                 `json:"locale"`
 	Navbar       NavbarPreference       `json:"navbar"`
 	QueryHistory QueryHistoryPreference `json:"queryHistory"`
 }
@@ -87,6 +88,7 @@ type SavePreferencesCommand struct {
 	Timezone        string                  `json:"timezone,omitempty"`
 	WeekStart       string                  `json:"weekStart,omitempty"`
 	Theme           string                  `json:"theme,omitempty"`
+	Locale          string                  `json:"locale,omitempty"`
 	Navbar          *NavbarPreference       `json:"navbar,omitempty"`
 	QueryHistory    *QueryHistoryPreference `json:"queryHistory,omitempty"`
 }
@@ -100,6 +102,7 @@ type PatchPreferencesCommand struct {
 	Timezone        *string                 `json:"timezone,omitempty"`
 	WeekStart       *string                 `json:"weekStart,omitempty"`
 	Theme           *string                 `json:"theme,omitempty"`
+	Locale          *string                 `json:"locale,omitempty"`
 	Navbar          *NavbarPreference       `json:"navbar,omitempty"`
 	QueryHistory    *QueryHistoryPreference `json:"queryHistory,omitempty"`
 }
