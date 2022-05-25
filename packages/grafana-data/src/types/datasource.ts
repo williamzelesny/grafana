@@ -216,6 +216,7 @@ abstract class DataSourceApi<
     this.type = instanceSettings.type;
     this.meta = instanceSettings.meta;
     this.uid = instanceSettings.uid;
+    this.defaultQuery = {};
   }
 
   /**
@@ -369,6 +370,8 @@ abstract class DataSourceApi<
     | StandardVariableSupport<DataSourceApi<TQuery, TOptions>>
     | CustomVariableSupport<DataSourceApi<TQuery, TOptions>>
     | DataSourceVariableSupport<DataSourceApi<TQuery, TOptions>>;
+
+  defaultQuery: Partial<TQuery>;
 }
 
 export interface MetadataInspectorProps<
