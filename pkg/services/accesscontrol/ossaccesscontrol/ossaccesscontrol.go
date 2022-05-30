@@ -107,7 +107,7 @@ func (ac *OSSAccessControlService) GetUserRoles(ctx context.Context, user *model
 }
 
 // GetUserPermissions returns user permissions based on built-in roles
-func (ac *OSSAccessControlService) GetUserPermissions(ctx context.Context, user *models.SignedInUser, _ accesscontrol.Options) ([]*accesscontrol.Permission, error) {
+func (ac *OSSAccessControlService) GetUserPermissions(ctx context.Context, user *models.SignedInUser, _ accesscontrol.Options) ([]accesscontrol.Permission, error) {
 	timer := prometheus.NewTimer(metrics.MAccessPermissionsSummary)
 	defer timer.ObserveDuration()
 
@@ -124,28 +124,24 @@ func (ac *OSSAccessControlService) GetUserPermissions(ctx context.Context, user 
 	}
 
 	permissions = append(permissions, dbPermissions...)
-	resolved := make([]*accesscontrol.Permission, 0, len(permissions))
 	keywordMutator := ac.scopeResolvers.GetScopeKeywordMutator(user)
-	for _, p := range permissions {
+	for i := range permissions {
 		// if the permission has a keyword in its scope it will be resolved
-		p.Scope, err = keywordMutator(ctx, p.Scope)
+		permissions[i].Scope, err = keywordMutator(ctx, permissions[i].Scope)
 		if err != nil {
 			return nil, err
 		}
-		resolved = append(resolved, p)
 	}
 
-	return resolved, nil
+	return permissions, nil
 }
 
-func (ac *OSSAccessControlService) getFixedPermissions(ctx context.Context, user *models.SignedInUser) []*accesscontrol.Permission {
-	permissions := make([]*accesscontrol.Permission, 0)
+func (ac *OSSAccessControlService) getFixedPermissions(ctx context.Context, user *models.SignedInUser) []accesscontrol.Permission {
+	permissions := make([]accesscontrol.Permission, 0)
 
 	for _, builtin := range ac.GetUserBuiltInRoles(user) {
 		if basicRole, ok := ac.roles[builtin]; ok {
-			for i := range basicRole.Permissions {
-				permissions = append(permissions, &basicRole.Permissions[i])
-			}
+			permissions = append(permissions, basicRole.Permissions...)
 		}
 	}
 
