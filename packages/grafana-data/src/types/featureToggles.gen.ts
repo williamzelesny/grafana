@@ -61,4 +61,5 @@ export interface FeatureToggles {
   validateDashboardsOnSave?: boolean;
   prometheusWideSeries?: boolean;
   canvasPanelNesting?: boolean;
+  dataConnectionsConsole?: boolean;
 }
