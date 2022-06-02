@@ -62,6 +62,7 @@ export function getLayerEditor(opts: LayerEditorOptions): NestedPanelOptions<Map
       const layer = geomapLayerRegistry.getIfExists(options?.type);
 
       const layerTypes = geomapLayerRegistry.selectOptions(
+        //TODO: sort data layer base map types appropriately
         options?.type // the selected value
           ? [options.type] // as an array
           : [DEFAULT_BASEMAP_CONFIG.type],
@@ -91,11 +92,19 @@ export function getLayerEditor(opts: LayerEditorOptions): NestedPanelOptions<Map
       if (handler.registerOptionsUI) {
         handler.registerOptionsUI(builder);
       }
-      if (layer.showOpacity) {
-        // TODO -- add opacity check
-      }
-
       if (!isEqual(opts.category, ['Base layer'])) {
+        if (layer.showOpacity) {
+          builder.addSliderInput({
+            path: 'opacity',
+            name: 'Opacity',
+            defaultValue: 1,
+            settings: {
+              min: 0,
+              max: 1,
+              step: 0.1,
+            },
+          });
+        }
         builder.addBooleanSwitch({
           path: 'tooltip',
           name: 'Display tooltip',
@@ -118,9 +127,6 @@ function baseMapFilter(layer: MapLayerRegistryItem): boolean {
 }
 
 export function dataLayerFilter(layer: MapLayerRegistryItem): boolean {
-  if (layer.isBaseMap) {
-    return false;
-  }
   if (layer.state === PluginState.alpha) {
     return hasAlphaPanels;
   }
